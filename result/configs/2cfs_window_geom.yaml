@@ -1,0 +1,92 @@
+data_to_plot:
+  page1:
+    data:
+      data1: [stateEstimateZ.px, stateEstimateZ.py, stateEstimateZ.pz]
+      data2: [ctrltargetZ.x, ctrltargetZ.y, ctrltargetZ.z]
+      name1: p0
+      name2: p0d
+      timestamp: []
+    num_of_plots: 3
+    plot_labels: ['x [m]', 'y [m]', 'z [m]']
+    special: true
+    title: Payload Pose
+    unit: mm
+  page2:
+    data:
+      data1: [stateEstimateZ.pvx, stateEstimateZ.pvy, stateEstimateZ.pvz]
+      data2: [ctrltargetZ.vx, ctrltargetZ.vy, ctrltargetZ.vz]
+      name1: v0
+      name2: v0d
+    num_of_plots: 3
+    plot_labels: ['vx [m/s]', 'vy [m/s]', 'vz [m/s]']
+    special: false
+    title: Payload Velocity
+    unit: mm
+  page3:
+    data:
+      data1: [powerDist.thrustPart, powerDist.rollPart, powerDist.pitchPart, powerDist.yawPart,
+        powerDist.maxThrust]
+      name1: Thrust
+    num_of_plots: 4
+    plot_labels: ['f1 [g]', 'f2 [g]', 'f3 [g]', 'f4 [g]', maxThrust]
+    special: true
+    title: Thrust
+    unit: g
+  page4:
+    data:
+      data1: [ctrlLeeP.Fdx, ctrlLeeP.Fdy, ctrlLeeP.Fdz]
+      name1: Fd
+    num_of_plots: 3
+    plot_labels: ['Fdx [N]', 'Fdy [N]', 'Fdz [N]']
+    special: false
+    title: Desired Payload Force
+    unit: N
+  page5:
+    data:
+      data1: [ctrlLeeP.desVirtInpx, ctrlLeeP.desVirtInpy, ctrlLeeP.desVirtInpz]
+      data2: [ctrlLeeP.mu_refx, ctrlLeeP.mu_refy, ctrlLeeP.mu_refz]
+      name1: mu
+      name2: mu_ref
+    num_of_plots: 3
+    plot_labels: ['mux [N]', 'muy [N]', 'muz [N]']
+    special: false
+    title: Desired Cable force
+    unit: N
+  page6:
+    data:
+      data1: [ctrlLeeP.qix, ctrlLeeP.qiy, ctrlLeeP.qiz]
+      data2: [ctrlLeeP.qdix, ctrlLeeP.qdiy, ctrlLeeP.qdiz]
+      name1: qi
+      name2: qdi
+    num_of_plots: 3
+    plot_labels: ['qix []', 'qiy []', 'qiz []']
+    special: false
+    title: Cable Unit Vectors
+    unit: N
+  page7:
+    data:
+      data1: [ctrlLeeP.qidotx, ctrlLeeP.qidoty, ctrlLeeP.qidotz]
+      data2: [ctrlLeeP.qidrefx, ctrlLeeP.qidrefy, ctrlLeeP.qidrefz]
+      name1: qidot
+      name2: qidref
+    num_of_plots: 3
+    plot_labels: ['qidotx [rad/s]', 'qidoty [rad/s]', 'qidotz [rad/s]']
+    special: false
+    title: Cable Unit Vector Derivative
+    unit: N
+flights:
+  data:
+  - [data/2cfs_window/cf2/geom/cf2_1_00, data/2cfs_window/cf7/geom/cf7_1_00]
+  - [data/2cfs_window/cf2/geom/cf2_1_03, data/2cfs_window/cf7/geom/cf7_1_03]
+  - [data/2cfs_window/cf2/geom/cf2_1_04, data/2cfs_window/cf7/geom/cf7_1_04]
+  - [data/2cfs_window/cf2/geom/cf2_1_05, data/2cfs_window/cf7/geom/cf7_1_05]
+  - [data/2cfs_window/cf2/geom/cf2_1_06, data/2cfs_window/cf7/geom/cf7_1_06]
+  - [data/2cfs_window/cf2/geom/cf2_1_07, data/2cfs_window/cf7/geom/cf7_1_07]
+  - [data/2cfs_window/cf2/geom/cf2_1_08, data/2cfs_window/cf7/geom/cf7_1_08]
+  - [data/2cfs_window/cf2/geom/cf2_1_09, data/2cfs_window/cf7/geom/cf7_1_09]
+  extract: true
+  name: 2cfs_window_geom
+plot:
+  enabled: true
+  files:
+  - [data/2cfs_window/cf2/geom/cf2_1_00, data/2cfs_window/cf7/geom/cf7_1_00]

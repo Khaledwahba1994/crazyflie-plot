@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/khaledwahba94/imrc/crazyflie-plot/report.py", line 99, in <module>
+    main()
+  File "/home/khaledwahba94/imrc/crazyflie-plot/report.py", line 14, in main
+    data = loadyaml(args.config)
+  File "/home/khaledwahba94/imrc/crazyflie-plot/helper.py", line 69, in loadyaml
+    with open(file_in, "r") as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'result/configs/2cfs_window_opt'
