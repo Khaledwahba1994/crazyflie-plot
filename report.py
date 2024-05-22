@@ -5,7 +5,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, help="config yaml file, name only without extension (assumed to be .yaml)")
-    parser.add_argument("--output", default=None,  type=str, help="save output file, name only without extension (assumed to be .yaml)")
+    parser.add_argument("--output", default='output',  type=str, help="save output file, name only without extension (assumed to be .yaml)")
     parser.add_argument("--pdf", default="flight",  type=str, help="save output file, name only without extension (assumed to be .pdf)")
     parser.add_argument("--start", default=0.0,  type=float, help="start time")
     parser.add_argument("--end", default=40.0,  type=float, help="end time")
