@@ -1,3 +1,4 @@
 output_*
 output*
 *.pdf
+__pycache__/
