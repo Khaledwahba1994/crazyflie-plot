@@ -25,7 +25,7 @@ def main():
     flightsData = []
     starttimes = []
     
-    for files in flights:
+    for k, files in enumerate(flights):
         starttime, logDatas = extractData(files, start_time=start_time, end_time=end_time)
         flightsData.append(logDatas)
         starttimes.append(starttime)
@@ -91,8 +91,8 @@ def main():
 
 
 
-    stats_dict = computeStats(data_to_plot, flights)
-    saveyaml2(args.output, stats_dict)
+    # stats_dict = computeStats(data_to_plot, flights)
+    # saveyaml2(args.output, stats_dict)
 
     
 if __name__=="__main__":
