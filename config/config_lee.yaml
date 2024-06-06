@@ -1,0 +1,139 @@
+flights: 
+  extract: true
+  name: lee
+  data:
+    # - [data/tune_lee/log_exp]
+    # - [data/tune_lee/log_01]
+    # - [data/tune_lee/log_02]
+    # - [data/tune_lee/log_03]
+    # - [data/tune_lee/log_04]
+    # - [data/tune_lee/jana38]
+    - [data/tune_lee/log_05]
+    - [data/tune_lee/log_06]
+    - [data/tune_lee/log_07]
+
+start_time: 2.0
+end_time: 40.0
+plot:
+  enabled: true
+  files:
+    # - [data/tune_lee/log_exp]
+    # - [data/tune_lee/log_01]
+    # - [data/tune_lee/log_02]
+    # - [data/tune_lee/log_03]
+    # - [data/tune_lee/log_04]
+    # - [data/tune_lee/jana38]
+    - [data/tune_lee/log_05]
+    - [data/tune_lee/log_06]
+    - [data/tune_lee/log_07]
+
+
+data_to_plot:  
+    page1:
+      special: false # if this plot needs a special calculation 
+      plot_labels: ["x [m]", "y [m]", "z [m]"]
+      unit: mm 
+      data:
+        name1: p
+        data1: [stateEstimateZ.x, stateEstimateZ.y, stateEstimateZ.z]
+        name2: pd
+        data2: [ctrltargetZ.x, ctrltargetZ.y, ctrltargetZ.z]
+        timestamp: []
+      title: Pose
+      num_of_plots: 3
+
+    page2:
+      special: false
+      plot_labels: ['vx [m/s]', 'vy [m/s]', 'vz [m/s]']
+      unit: mm
+      data:
+        name1: v
+        data1: [stateEstimateZ.vx, stateEstimateZ.vy, stateEstimateZ.vz]
+        name2: vd
+        data2: [ctrltargetZ.vx, ctrltargetZ.vy, ctrltargetZ.vz]
+      title: Velocity
+      num_of_plots: 3
+
+    page3:
+      special: false
+      plot_labels: ['r [rad]', 'p [rad]', 'y [rad]']
+      unit: rad 
+      data:
+        name1: rpy
+        data1: [ctrlLee.rpyx, ctrlLee.rpyy, ctrlLee.rpyz] 
+        name2: rpyd
+        data2: [ctrlLee.rpydx, ctrlLee.rpydy, ctrlLee.rpydz] 
+      title: Orientation
+      num_of_plots: 3
+
+
+    # page1:
+    #   special: false
+    #   plot_labels: ['rpm1', 'rpm2 ', 'rpm3', 'rpm3']
+    #   unit: rad/s
+    #   data:
+    #     name1: rpm
+    #     data1: [rpm.m1, rpm.m2, rpm.m3, rmp.m4] 
+
+    #   title: rpms
+    #   num_of_plots: 4
+
+    page4:
+      special: false
+      plot_labels: ['wx [rad/s]', 'wy [rad/s]', 'wz [rad/s]']
+      unit: rad/s
+      data:
+        name1: w
+        data1: [ctrlLee.omegax, ctrlLee.omegay, ctrlLee.omegaz] 
+        name2: wref
+        data2: [ctrlLee.omegarx, ctrlLee.omegary, ctrlLee.omegarz] 
+
+      title: Angular Velocities
+      num_of_plots: 3
+
+    page5:
+      special: true
+      plot_labels: ['f1 [N]', 'f2 [N]', 'f3 [N]', 'f4 [N]']
+      unit: N
+      data:
+        name1: Thrust
+        data1: [ctrlLee.thrustSi, ctrlLee.torquex, ctrlLee.torquey, ctrlLee.torquez] 
+      title: Thrust 
+      num_of_plots: 4
+
+
+    # page5:
+    #   special: false
+    #   plot_labels: ['mux [N]', 'muy [N]', 'muz [N]']
+    #   unit: N 
+    #   data:
+    #     name1: mu
+    #     data1: [ctrlLeeP.desVirtInpx, ctrlLeeP.desVirtInpy, ctrlLeeP.desVirtInpz] 
+    #     name2: mu_ref
+    #     data2: [ctrlLeeP.mu_refx, ctrlLeeP.mu_refy, ctrlLeeP.mu_refz] 
+    #   title: Desired Cable force
+    #   num_of_plots: 3
+
+    # page6:
+    #   special: false
+    #   plot_labels: ['qix []', 'qiy []', 'qiz []']
+    #   unit: N 
+    #   data:
+    #     name1: qi
+    #     data1: [ctrlLeeP.qix, ctrlLeeP.qiy, ctrlLeeP.qiz] 
+    #     name2: qdi
+    #     data2: [ctrlLeeP.qdix, ctrlLeeP.qdiy, ctrlLeeP.qdiz] 
+    #   title: Cable Unit Vectors
+    #   num_of_plots: 3
+
+    # page7:
+    #   special: false
+    #   plot_labels: ['qidotx [rad/s]', 'qidoty [rad/s]', 'qidotz [rad/s]']
+    #   unit: N 
+    #   data:
+    #     name1: qidot
+    #     data1: [ctrlLeeP.qidotx, ctrlLeeP.qidoty, ctrlLeeP.qidotz] 
+    #     name2: qidref
+    #     data2: [ctrlLeeP.qidrefx, ctrlLeeP.qidrefy, ctrlLeeP.qidrefz] 
+    #   title: Cable Unit Vector Derivative
+    #   num_of_plots: 3
