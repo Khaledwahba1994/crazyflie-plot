@@ -50,7 +50,7 @@ def create_fig(cf_data, cf_name):
                 if j < 4:
                     if len(data[axis]) > 0: 
                         # special plot for the thrust to add maxThrust
-                        ax[j].plot(time, data["maxThrust"], lw=0.75,label="maxThrust")
+                        # ax[j].plot(time, data["maxThrust"], lw=0.75,label="maxThrust")
                         ax[j].plot(time, data[axis], lw=0.75, label=f"{axis}")
                         ax[j].set_ylabel(plot_labels[j])
                         ax[j].legend()
@@ -154,22 +154,48 @@ def computeStats(data, flights):
     return stats_dict
 
 ## Special computations are added here:
+# def computeMotorForces(motor_components, i):
+#     names =  motor_components[f"name{i+1}"]
+#     motorpart = []
+#     for name in names: 
+#         motorpart.append(np.array([motor_components[f"data{i+1}"][name]]))                   
+
+#     motor_components[f"name{i+1}"] = dict()
+#     motor_components[f"name{i+1}"] = ["f1", "f2", "f3", "f4", "maxThrust"]
+#     motor_components[f"data{i+1}"] = dict()
+
+#     motor_components[f"data{i+1}"]["f1"] = np.array(motorpart[0] - motorpart[1] - motorpart[2] + motorpart[3])[0].tolist()
+#     motor_components[f"data{i+1}"]["f2"] = np.array(motorpart[0] - motorpart[1] + motorpart[2] - motorpart[3])[0].tolist()
+#     motor_components[f"data{i+1}"]["f3"] = np.array(motorpart[0] + motorpart[1] + motorpart[2] + motorpart[3])[0].tolist()
+#     motor_components[f"data{i+1}"]["f4"] = np.array(motorpart[0] + motorpart[1] - motorpart[2] - motorpart[3])[0].tolist()
+#     motor_components[f"data{i+1}"]["maxThrust"] = np.array(motorpart[4])[0].tolist()
+    
+#     return motor_components
+
 def computeMotorForces(motor_components, i):
     names =  motor_components[f"name{i+1}"]
     motorpart = []
     for name in names: 
         motorpart.append(np.array([motor_components[f"data{i+1}"][name]]))                   
+    armLength = 0.046
+    thrustToTorque = 0.005964552
+    arm = 0.707106781 * armLength;
+    rollPart  = 0.25 / arm * motorpart[1]
+    pitchPart = 0.25 / arm * motorpart[2]
+    thrustPart = 0.25 * motorpart[0] 
+    yawPart = 0.25 * motorpart[3] / thrustToTorque;
+    
+    for name in names: 
+        motorpart.append(np.array([motor_components[f"data{i+1}"][name]]))                   
 
     motor_components[f"name{i+1}"] = dict()
-    motor_components[f"name{i+1}"] = ["f1", "f2", "f3", "f4", "maxThrust"]
+    motor_components[f"name{i+1}"] = ["f1", "f2", "f3", "f4"]
     motor_components[f"data{i+1}"] = dict()
 
-    motor_components[f"data{i+1}"]["f1"] = np.array(motorpart[0] - motorpart[1] - motorpart[2] + motorpart[3])[0].tolist()
-    motor_components[f"data{i+1}"]["f2"] = np.array(motorpart[0] - motorpart[1] + motorpart[2] - motorpart[3])[0].tolist()
-    motor_components[f"data{i+1}"]["f3"] = np.array(motorpart[0] + motorpart[1] + motorpart[2] + motorpart[3])[0].tolist()
-    motor_components[f"data{i+1}"]["f4"] = np.array(motorpart[0] + motorpart[1] - motorpart[2] - motorpart[3])[0].tolist()
-    motor_components[f"data{i+1}"]["maxThrust"] = np.array(motorpart[4])[0].tolist()
-    
+    motor_components[f"data{i+1}"]["f1"] = np.array(thrustPart - rollPart - pitchPart + yawPart)[0].tolist()
+    motor_components[f"data{i+1}"]["f2"] = np.array(thrustPart - rollPart + pitchPart - yawPart)[0].tolist()
+    motor_components[f"data{i+1}"]["f3"] = np.array(thrustPart + rollPart + pitchPart + yawPart)[0].tolist()
+    motor_components[f"data{i+1}"]["f4"] = np.array(thrustPart + rollPart - pitchPart - yawPart)[0].tolist()
     return motor_components
 
 def main():
