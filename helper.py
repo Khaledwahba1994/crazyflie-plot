@@ -97,7 +97,7 @@ def getData(logDatas, dataname, unit):
             res = np.array(logDatas[data])
             if unit == "mm":
                 res = res / 1000.0
-            elif unit == "g":
+            elif unit == "grams":
                 res = res / 100.0
             out.extend(res.tolist())
     return out
@@ -206,38 +206,107 @@ def computeMotorForces_new(motor_components, i):
     motor_components[f"data{i+1}"]["f4"] = np.array(thrustPart + rollPart - pitchPart - yawPart)[0].tolist()
     return motor_components
 
+def computerpy(quat, i, axis_name):
+    names = quat[f"name{i+1}"]
+    quats = []
+    for name in names:
+        quats.append(quat[f"data{i+1}"][name])
+    quats = np.array(quats).T
+    if len(quats) == 0:
+        print(f"Warning!, {axis_name} is empty")
+    rpy = rn.to_euler(quats, convention="xyz")
+    quat[f"name{i+1}"] = dict()
+    quat[f"name{i+1}"] = ['roll', 'pitch', 'yaw']
+    quat[f"data{i+1}"] = dict()
+    quat[f"data{i+1}"]["roll"]  = rpy[:,0].tolist() 
+    quat[f"data{i+1}"]["pitch"]  = rpy[:,1].tolist()
+    quat[f"data{i+1}"]["yaw"]  = rpy[:,2].tolist()
+
+    return quat
+
 
 def computeacc(acc, i):
     names = acc[f"name{i+1}"]
-    print(names)
-    accs = []
-    print(f"data{i+1}")
-    print(acc['data1'].keys())
+    data = []
     for name in names:
-        accs.append(acc[f"data{i+1}"][name])
-    # [stateEstimate.ax, stateEstimate.ay, stateEstimate.az, acc.x, acc.y, acc.z, stateEstimate.qw, stateEstimate.qx, stateEstimate.qy, stateEstimate.qz]
-    accw = np.array(accs[0:3])
-    accb = np.array(accs[3:6]) 
-
-    remove_grav = np.zeros_like(accb)
-    remove_grav[2,:] = 1
-    quat = np.array(accs[6:10])
-    # rpy = np.array(accs[6:9])
-    # quat = rn.from_euler(rpy[0], rpy[1], rpy[2], convention="xyz", axis_type="extrinsic")
-    acc_calc_world = rn.rotate(quat.T, accb.T).T
-    acc_calc_world -= remove_grav
+        data.append(acc[f"data{i+1}"][name])
+    accb = np.array(data[0:3]).T
+    quat = np.array(data[3:7]).T
+    acc_calc_world = rn.rotate(quat, accb)
     acc[f"name{i+1}"] = dict()
-    acc[f"name{i+1}"] = ['stateEstimate.ax', 'stateEstimate.ay', 'stateEstimate.az','rotated_ax', 'rotated_ay', 'rotated_az']
+    acc[f"name{i+1}"] = ['ax_w', 'ay_w', 'az_w']
     acc[f"data{i+1}"] = dict()
 
-    acc[f"data{i+1}"]["stateEstimate.ax"]  = accw[0].tolist() 
-    acc[f"data{i+1}"]["stateEstimate.ay"]  = accw[1].tolist()
-    acc[f"data{i+1}"]["stateEstimate.az"]  = accw[2].tolist()
-    acc[f"data{i+1}"]["rotated_ax"] = acc_calc_world[0].tolist()
-    acc[f"data{i+1}"]["rotated_ay"] = acc_calc_world[1].tolist()
-    acc[f"data{i+1}"]["rotated_az"] = acc_calc_world[2].tolist()
+    acc[f"data{i+1}"]["ax_w"] = (acc_calc_world[:,0]*9.81).tolist()
+    acc[f"data{i+1}"]["ay_w"] = (acc_calc_world[:,1]*9.81).tolist()
+    acc[f"data{i+1}"]["az_w"] = ((acc_calc_world[:,2] - np.ones_like(acc_calc_world[:,2]))*9.81).tolist()
     return acc
     
+def forcesfromrpm(rpm):
+    forces = np.zeros(rpm.shape)
+    for k, force in enumerate(forces):
+        kw = 4.310657321921365e-08
+        force_in_newton = (kw * rpm[k]**2 / 1000) * 9.81
+        forces[k, :] = force_in_newton
+    return forces
+
+def forcesfrompwm(pwm):
+    forces = np.zeros(pwm.shape)
+    for k, force in enumerate(forces):
+        forces_in_grams = -5.360718677769569 + pwm[k] * 0.0005492858445116151 
+        forces[k,:] = (forces_in_grams / 1000) * 9.81
+    return forces
+
+def computeFa(aw, q, u, axis_name):
+    if "pwm" in axis_name:
+        motor_forces_newton = forcesfrompwm(u.T)
+    elif "rpm" in axis_name:
+        motor_forces_newton = forcesfromrpm(u.T)
+    else: 
+        print("Wrong input name")
+        exit()
+    m = 0.038
+    g = np.array([0,0,-9.81])
+    arm_length = 0.046  # m
+    arm = 0.707106781 * arm_length
+    t2t = 0.006  # thrust-to-torque ratio
+    B0 = np.array([
+        [1, 1, 1, 1],
+        [-arm, -arm, arm, arm],
+        [-arm, arm, arm, -arm],
+        [-t2t, t2t, -t2t, t2t]
+        ])
+    fa = np.zeros(aw.shape)
+
+    for k, f in enumerate(fa):
+        eta = np.dot(B0, motor_forces_newton[k,:])
+        f_u = np.array([0, 0, eta[0]])
+        fa[k] = m * aw[k] - rn.rotate(q[:,k], f_u)
+    return fa
+
+
+def computeResidual(states, i, axis_name):
+    names = states[f"name{i+1}"]
+    print(names)
+    data = []
+    for name in names:
+        data.append(states[f"data{i+1}"][name])
+    accb = np.array(data[0:3])
+    quat = np.array(data[3:7])
+    u    = np.array(data[7:11])
+
+    aw = rn.rotate(quat.T, accb.T)
+    aw[:] *= 9.81
+
+    fa = computeFa(aw, quat, u, axis_name)
+    states[f"name{i+1}"] = dict()
+    states[f"name{i+1}"] = ['Fax_'+axis_name, 'Fay_'+axis_name, 'Faz_'+axis_name]
+    states[f"data{i+1}"] = dict()
+
+    states[f"data{i+1}"]["Fax_"+axis_name] = fa[:,0].tolist()
+    states[f"data{i+1}"]["Fay_"+axis_name] = fa[:,1].tolist()
+    states[f"data{i+1}"]["Faz_"+axis_name] = fa[:,2].tolist()
+    return states
 
 
 def main():

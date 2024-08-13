@@ -8,7 +8,7 @@ def main():
     parser.add_argument("--output", default='output',  type=str, help="save output file, name only without extension (assumed to be .yaml)")
     parser.add_argument("--pdf", default="flight",  type=str, help="save output file, name only without extension (assumed to be .pdf)")
     parser.add_argument("--start", default=0.0,  type=float, help="start time")
-    parser.add_argument("--end", default=40.0,  type=float, help="end time")
+    parser.add_argument("--end", default=100.0,  type=float, help="end time")
     
     args = parser.parse_args()
     data = loadyaml(args.config)
@@ -28,7 +28,6 @@ def main():
     for k, files in enumerate(flights):
         starttime, logDatas = extractData(files, start_time=start_time, end_time=end_time)
         # print(logDatas[0].keys())
-        # exit()
         flightsData.append(logDatas)
         starttimes.append(starttime)
     data_to_plot = dict()
@@ -73,14 +72,23 @@ def main():
                             if axis_name == "newThrust":
                                 motorForces_new = computeMotorForces_new(data_to_plot[flight_num][page_num][filename]["name_data"], i)
                                 data_to_plot[flight_num][page_num][filename]["name_data"] = motorForces_new
-                            if axis_name == "a_world":
+                            if axis_name == "ab":
                                 compute_acc = computeacc(data_to_plot[flight_num][page_num][filename]["name_data"], i)
                                 data_to_plot[flight_num][page_num][filename]["name_data"] = compute_acc
+                            if axis_name == "rpy"or axis_name == "rpy_mocap":
+                                compute_rpy = computerpy(data_to_plot[flight_num][page_num][filename]["name_data"], i, axis_name)
+                                data_to_plot[flight_num][page_num][filename]["name_data"] = compute_rpy
+                            if axis_name == "Residual Forces rpm"or axis_name == "Residual Forces pwm":
+                                fa = computeResidual(data_to_plot[flight_num][page_num][filename]["name_data"], i, axis_name)
+                                data_to_plot[flight_num][page_num][filename]["name_data"] = fa
+
+
+
         saveyaml(args.output + "_config",data_to_plot)
     
 
     else: 
-        data_to_plot = loadyaml(args.output + "_config.yaml")
+        data_to_plot = loadyaml(args.pdf + "_" + args.output + "_config.yaml")
     
 
     # generate plots
@@ -98,9 +106,9 @@ def main():
             f.close()
 
 
-
-    # stats_dict = computeStats(data_to_plot, flights)
-    # saveyaml2(args.output, stats_dict)
+    # if args.output:
+    #     stats_dict = computeStats(data_to_plot, flights)
+    #     saveyaml2(args.output, stats_dict)
 
     
 if __name__=="__main__":
