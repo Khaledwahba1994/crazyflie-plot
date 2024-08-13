@@ -27,6 +27,8 @@ def main():
     
     for k, files in enumerate(flights):
         starttime, logDatas = extractData(files, start_time=start_time, end_time=end_time)
+        # print(logDatas[0].keys())
+        # exit()
         flightsData.append(logDatas)
         starttimes.append(starttime)
     data_to_plot = dict()
@@ -68,6 +70,12 @@ def main():
                             if axis_name == "Thrust":
                                 motorForces = computeMotorForces(data_to_plot[flight_num][page_num][filename]["name_data"], i)
                                 data_to_plot[flight_num][page_num][filename]["name_data"] = motorForces
+                            if axis_name == "newThrust":
+                                motorForces_new = computeMotorForces_new(data_to_plot[flight_num][page_num][filename]["name_data"], i)
+                                data_to_plot[flight_num][page_num][filename]["name_data"] = motorForces_new
+                            if axis_name == "a_world":
+                                compute_acc = computeacc(data_to_plot[flight_num][page_num][filename]["name_data"], i)
+                                data_to_plot[flight_num][page_num][filename]["name_data"] = compute_acc
         saveyaml(args.output + "_config",data_to_plot)
     
 

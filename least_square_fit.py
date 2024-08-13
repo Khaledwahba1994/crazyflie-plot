@@ -9,14 +9,15 @@ f = "/home/khaledwahba94/imrc/crazyflie-plot/data/2cfs_forest/cf2/opt/cf2_1_01"
 data  = cfusdlog.decode(f)['fixedFrequency'] 
 starttime = data['timestamp'][0] 
 time = ((data['timestamp'] - starttime)/1000.0).tolist()
-
+# # print(data.keys())
+# exit()
 for key in data.keys():
     if "acc.x" in key:
         acc = np.array([data["acc.x"] ,data["acc.y"], data["acc.z"]])
-    elif "stateEstimateZ.px" in key:
-        pos = np.array([data["stateEstimateZ.px"] ,data["stateEstimateZ.py"], data["stateEstimateZ.pz"]])/1000.0
-    elif "stateEstimateZ.vx" in key:
-        vel = np.array([data["stateEstimateZ.pvx"] ,data["stateEstimateZ.pvy"], data["stateEstimateZ.pvz"]])/1000.0
+    elif "ctrlLeeP.qix" in key:
+        pos = np.array([data["ctrlLeeP.qix"] ,data["ctrlLeeP.qiy"], data["ctrlLeeP.qiz"]])/1000.0
+    elif "ctrlLeeP.qidotx" in key:
+        vel = np.array([data["ctrlLeeP.qidotx"] ,data["ctrlLeeP.qidoty"], data["ctrlLeeP.qidotz"]])/1000.0
     else:
         continue
 data_xyz = []

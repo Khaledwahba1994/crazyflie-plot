@@ -1,6 +1,6 @@
 flights: 
   extract: true
-  name: opt_4cfs_window_trial
+  name: test_data
   data:
 
     # # 4 cfs window opt trial: 
@@ -40,8 +40,16 @@ flights:
     # - [cf2/geom/cf2_1_09, cf7/geom/cf7_1_09]
 
     # 2 cfs window opt:
-    - [data/2cfs_window/cf2/opt/cf2_1_01, data/2cfs_window/cf7/opt/cf7_1_01]
-    - [data/2cfs_window/cf2/opt/cf2_1_02, data/2cfs_window/cf7/opt/cf7_1_02]
+    # - [data/2cfs_forest/cf2/opt/cf2_1_05]
+    # - [data/2cfs_forest/cf2/opt/cf2_1_06]
+    # - [data/test_data/cf3_t_00]
+    # - [data/test_data/cf3_t_01]
+    # - [data/test_data/cf3_t_03]
+    # - [data/test_data/cf3_t_04]
+    # - [data/test_data/cf3_t_05]
+    # - [data/test_data/cf3_t_06]
+    - [data/test_data/cf3_t_07]
+
     # - [cf2/opt/cf2_1_03, cf7/opt/cf7_1_03]
     # - [cf2/opt/cf2_1_04, cf7/opt/cf7_1_04]
     # - [cf2/opt/cf2_1_05, cf7/opt/cf7_1_05]
@@ -51,8 +59,8 @@ flights:
     # - [cf2/opt/cf2_1_09, cf7/opt/cf7_1_09]
     # - [cf2/opt/cf2_1_10, cf7/opt/cf7_1_10]
 
-start_time: 2.0
-end_time: 40.0
+start_time: 12.0
+end_time: 20.0
 plot:
   enabled: true
   files:
@@ -92,8 +100,18 @@ plot:
     # - [cf2/geom/cf2_1_09, cf7/geom/cf7_1_09]
 
     # 2 cfs window opt:
-    - [data/2cfs_window/cf2/opt/cf2_1_01, data/2cfs_window/cf7/opt/cf7_1_01]
-    - [data/2cfs_window/cf2/opt/cf2_1_02, data/2cfs_window/cf7/opt/cf7_1_02]
+    # - [data/2cfs_window/cf2/opt/cf2_1_01, data/2cfs_window/cf7/opt/cf7_1_01]
+    # - [data/2cfs_window/cf2/opt/cf2_1_02, data/2cfs_window/cf7/opt/cf7_1_02]
+    # - [data/2cfs_forest/cf2/opt/cf2_1_05]
+    # - [data/2cfs_forest/cf2/opt/cf2_1_06]
+    # - [data/test_data/cf3_t_00]
+    # - [data/test_data/cf3_t_01]
+    # - [data/test_data/cf3_t_03]
+    # - [data/test_data/cf3_t_04]
+    # - [data/test_data/cf3_t_05]
+    # - [data/test_data/cf3_t_06]
+    - [data/test_data/cf3_t_07]
+
     # - [cf2/opt/cf2_1_03, cf7/opt/cf7_1_03]
     # - [cf2/opt/cf2_1_04, cf7/opt/cf7_1_04]
     # - [cf2/opt/cf2_1_05, cf7/opt/cf7_1_05]
@@ -130,13 +148,23 @@ data_to_plot:
       title: Payload Velocity
       num_of_plots: 3
 
+    # page3:
+    #   special: true
+    #   plot_labels: ['f1 [g]', 'f2 [g]', 'f3 [g]', 'f4 [g]', 'maxThrust']
+    #   unit: g
+    #   data:
+    #     name1: Thrust
+    #     data1: [powerDist.thrustPart, powerDist.rollPart, powerDist.pitchPart, powerDist.yawPart, powerDist.maxThrust] 
+    #   title: Thrust 
+    #   num_of_plots: 4
+
     page3:
       special: true
-      plot_labels: ['f1 [g]', 'f2 [g]', 'f3 [g]', 'f4 [g]', 'maxThrust']
-      unit: g
+      plot_labels: ['f1 [N]', 'f2 [N]', 'f3 [N]', 'f4 [N]']
+      unit: N
       data:
-        name1: Thrust
-        data1: [powerDist.thrustPart, powerDist.rollPart, powerDist.pitchPart, powerDist.yawPart, powerDist.maxThrust] 
+        name1: newThrust
+        data1: [ctrlLeeP.thrustSI, ctrlLeeP.torquex, ctrlLeeP.torquey, ctrlLeeP.torquez] 
       title: Thrust 
       num_of_plots: 4
 
@@ -185,4 +213,41 @@ data_to_plot:
         name2: qidref
         data2: [ctrlLeeP.qidrefx, ctrlLeeP.qidrefy, ctrlLeeP.qidrefz] 
       title: Cable Unit Vector Derivative
+      num_of_plots: 3
+
+    page8:
+      special: false
+      plot_labels: ['r [rad]', 'p [rad]', 'y [rad]']
+      unit: rad 
+      data:
+        name1: rpy
+        data1: [ctrlLeeP.rpyx, ctrlLeeP.rpyy, ctrlLeeP.rpyz] 
+        name2: rpyd
+        data2: [ctrlLeeP.rpydx, ctrlLeeP.rpydy, ctrlLeeP.rpydz] 
+      title: Orientation
+      num_of_plots: 3
+
+    page9:
+      special: true # if this plot needs a special calculation 
+      plot_labels: ["x [g]", "y [g]", "z [g]"]
+      unit: m
+      data:
+        name1: aw
+        data1: [stateEstimate.ax, stateEstimate.ay, stateEstimate.az]
+        name2: ab
+        data2: [acc.x, acc.y, acc.z]
+        timestamp: []
+      title: acceleration
+      num_of_plots: 3
+
+
+    page10:
+      special: true
+      plot_labels: ['stateEstimate.ax [g]', 'stateEstimate.ay [g]', 'stateEstimate.az [g]','rotated_ax [g]', 'rotated_ay [g]', 'rotated_az [g]']
+      unit: grav 
+      data:
+        name1: a_world
+        data1: [stateEstimate.ax, stateEstimate.ay, stateEstimate.az, acc.x, acc.y, acc.z, stateEstimate.qw, stateEstimate.qx, stateEstimate.qy, stateEstimate.qz] 
+        # data1: [stateEstimate.ax, stateEstimate.ay, stateEstimate.az, acc.x, acc.y, acc.z, ctrlLeeP.rpyx, ctrlLeeP.rpyy, ctrlLeeP.rpyz] 
+      title: acceleration_rotated
       num_of_plots: 3

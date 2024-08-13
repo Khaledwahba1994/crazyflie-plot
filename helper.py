@@ -2,7 +2,7 @@ import cfusdlog
 import yaml
 import numpy as np
 import subprocess
-
+import rowan as rn
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.gridspec import SubplotSpec, GridSpec
 import matplotlib.pyplot as plt
@@ -45,20 +45,28 @@ def create_fig(cf_data, cf_name):
     for i, data in enumerate(datas):
         name = names[i]
         for j, axis in enumerate(name):
-            # add special conditions for special data
-            if axis_name[0] == "Thrust":
-                if j < 4:
-                    if len(data[axis]) > 0: 
-                        # special plot for the thrust to add maxThrust
-                        # ax[j].plot(time, data["maxThrust"], lw=0.75,label="maxThrust")
+            if len(data[axis]) > 0:    
+                # add special conditions for special data
+                if axis_name[0] == "Thrust":
+                    if j < 4:
+                        if len(data[axis]) > 0: 
+                            # special plot for the thrust to add maxThrust
+                            ax[j].plot(time, data["maxThrust"], lw=0.75,label="maxThrust")
+                            ax[j].plot(time, data[axis], lw=0.75, label=f"{axis}")
+                            ax[j].set_ylabel(plot_labels[j])
+                            ax[j].legend()
+                elif axis_name[0] == "a_world":
+                        if j < 3:
+                            ax[j].plot(time, data[axis], lw=0.75, label=f"{axis}")
+                            axis_ = axis.replace("stateEstimate.a", "rotated_a")
+                            ax[j].plot(time, data[axis_], lw=0.75, label=f"{axis_}")
+                            ax[j].set_ylabel(plot_labels[j])
+                            ax[j].legend()
+                else:
+                    if len(data[axis]) > 0:
                         ax[j].plot(time, data[axis], lw=0.75, label=f"{axis}")
                         ax[j].set_ylabel(plot_labels[j])
-                        ax[j].legend()
-            else:
-                if len(data[axis]) > 0:
-                    ax[j].plot(time, data[axis], lw=0.75, label=f"{axis}")
-                    ax[j].set_ylabel(plot_labels[j])
-                    ax[0].legend()
+                        ax[0].legend()
         grid = plt.GridSpec(num_of_plots, 1)
         create_subtitle(fig, grid[0, ::], title)
     fig.supxlabel("time [s]",fontsize='small')
@@ -153,26 +161,26 @@ def computeStats(data, flights):
 
     return stats_dict
 
-## Special computations are added here:
-# def computeMotorForces(motor_components, i):
-#     names =  motor_components[f"name{i+1}"]
-#     motorpart = []
-#     for name in names: 
-#         motorpart.append(np.array([motor_components[f"data{i+1}"][name]]))                   
-
-#     motor_components[f"name{i+1}"] = dict()
-#     motor_components[f"name{i+1}"] = ["f1", "f2", "f3", "f4", "maxThrust"]
-#     motor_components[f"data{i+1}"] = dict()
-
-#     motor_components[f"data{i+1}"]["f1"] = np.array(motorpart[0] - motorpart[1] - motorpart[2] + motorpart[3])[0].tolist()
-#     motor_components[f"data{i+1}"]["f2"] = np.array(motorpart[0] - motorpart[1] + motorpart[2] - motorpart[3])[0].tolist()
-#     motor_components[f"data{i+1}"]["f3"] = np.array(motorpart[0] + motorpart[1] + motorpart[2] + motorpart[3])[0].tolist()
-#     motor_components[f"data{i+1}"]["f4"] = np.array(motorpart[0] + motorpart[1] - motorpart[2] - motorpart[3])[0].tolist()
-#     motor_components[f"data{i+1}"]["maxThrust"] = np.array(motorpart[4])[0].tolist()
-    
-#     return motor_components
-
+# Special computations are added here:
 def computeMotorForces(motor_components, i):
+    names =  motor_components[f"name{i+1}"]
+    motorpart = []
+    for name in names: 
+        motorpart.append(np.array([motor_components[f"data{i+1}"][name]]))                   
+
+    motor_components[f"name{i+1}"] = dict()
+    motor_components[f"name{i+1}"] = ["f1", "f2", "f3", "f4", "maxThrust"]
+    motor_components[f"data{i+1}"] = dict()
+
+    motor_components[f"data{i+1}"]["f1"] = np.array(motorpart[0] - motorpart[1] - motorpart[2] + motorpart[3])[0].tolist()
+    motor_components[f"data{i+1}"]["f2"] = np.array(motorpart[0] - motorpart[1] + motorpart[2] - motorpart[3])[0].tolist()
+    motor_components[f"data{i+1}"]["f3"] = np.array(motorpart[0] + motorpart[1] + motorpart[2] + motorpart[3])[0].tolist()
+    motor_components[f"data{i+1}"]["f4"] = np.array(motorpart[0] + motorpart[1] - motorpart[2] - motorpart[3])[0].tolist()
+    motor_components[f"data{i+1}"]["maxThrust"] = np.array(motorpart[4])[0].tolist()
+    
+    return motor_components
+
+def computeMotorForces_new(motor_components, i):
     names =  motor_components[f"name{i+1}"]
     motorpart = []
     for name in names: 
@@ -198,9 +206,43 @@ def computeMotorForces(motor_components, i):
     motor_components[f"data{i+1}"]["f4"] = np.array(thrustPart + rollPart - pitchPart - yawPart)[0].tolist()
     return motor_components
 
+
+def computeacc(acc, i):
+    names = acc[f"name{i+1}"]
+    print(names)
+    accs = []
+    print(f"data{i+1}")
+    print(acc['data1'].keys())
+    for name in names:
+        accs.append(acc[f"data{i+1}"][name])
+    # [stateEstimate.ax, stateEstimate.ay, stateEstimate.az, acc.x, acc.y, acc.z, stateEstimate.qw, stateEstimate.qx, stateEstimate.qy, stateEstimate.qz]
+    accw = np.array(accs[0:3])
+    accb = np.array(accs[3:6]) 
+
+    remove_grav = np.zeros_like(accb)
+    remove_grav[2,:] = 1
+    quat = np.array(accs[6:10])
+    # rpy = np.array(accs[6:9])
+    # quat = rn.from_euler(rpy[0], rpy[1], rpy[2], convention="xyz", axis_type="extrinsic")
+    acc_calc_world = rn.rotate(quat.T, accb.T).T
+    acc_calc_world -= remove_grav
+    acc[f"name{i+1}"] = dict()
+    acc[f"name{i+1}"] = ['stateEstimate.ax', 'stateEstimate.ay', 'stateEstimate.az','rotated_ax', 'rotated_ay', 'rotated_az']
+    acc[f"data{i+1}"] = dict()
+
+    acc[f"data{i+1}"]["stateEstimate.ax"]  = accw[0].tolist() 
+    acc[f"data{i+1}"]["stateEstimate.ay"]  = accw[1].tolist()
+    acc[f"data{i+1}"]["stateEstimate.az"]  = accw[2].tolist()
+    acc[f"data{i+1}"]["rotated_ax"] = acc_calc_world[0].tolist()
+    acc[f"data{i+1}"]["rotated_ay"] = acc_calc_world[1].tolist()
+    acc[f"data{i+1}"]["rotated_az"] = acc_calc_world[2].tolist()
+    return acc
+    
+
+
 def main():
     out = loadyaml("config.yaml")
-    print(out)
+    # print(out)
 
 if __name__=="__main__":
     main()
