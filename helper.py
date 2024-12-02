@@ -63,8 +63,16 @@ def create_fig(cf_data, cf_name):
                             ax[j].set_ylabel(plot_labels[j])
                             ax[j].legend()
                 else:
+                
+
+
                     if len(data[axis]) > 0:
-                        ax[j].plot(time, data[axis], lw=0.75, label=f"{axis}")
+                        if "gyro" in axis_name[0]:
+                            data[axis] = np.deg2rad(np.array(data[axis]))
+                            ax[j].plot(time, data[axis], lw=0.75, label=f"{axis}")
+
+                        else:
+                            ax[j].plot(time, data[axis], lw=0.75, label=f"{axis}")
                         ax[j].set_ylabel(plot_labels[j])
                         ax[0].legend()
         grid = plt.GridSpec(num_of_plots, 1)
@@ -277,7 +285,8 @@ def computeFa(aw, q, u, axis_name):
         [-t2t, t2t, -t2t, t2t]
         ])
     fa = np.zeros(aw.shape)
-
+    # print(motor_forces_newton)
+    # exit()
     for k, f in enumerate(fa):
         eta = np.dot(B0, motor_forces_newton[k,:])
         f_u = np.array([0, 0, eta[0]])
