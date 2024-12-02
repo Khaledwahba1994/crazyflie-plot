@@ -2,41 +2,146 @@ flights:
   extract: true
   name: eckart_data
   data:
-    - [data/test_data/cf3_t_07]
+    - [data/lee/cf2_lee_22]
+    # - [data/lee/cf00]
 
-start_time: 12.0
-end_time: 20.0
+start_time: 8.0
+end_time: 50.0
 plot:
   enabled: true
   files:
-    - [data/test_data/cf3_t_07]
+    - [data/lee/cf2_lee_22]
+    # - [data/lee/cf00]
+
 data_to_plot:  
     page1:
-      special: true # if this plot needs a special calculation 
+      special: false # if this plot needs a special calculation 
       plot_labels: ["x [m]", "y [m]", "z [m]"]
       unit: mm 
       data:
-        name1: p0
-        data1: [stateEstimateZ.px, stateEstimateZ.py, stateEstimateZ.pz]
-        name2: p0d
-        data2: [ctrltargetZ.x, ctrltargetZ.y, ctrltargetZ.z]
-        timestamp: []
-      title: Payload Pose
+        name1: p0d
+        data1: [ctrltargetZ.x, ctrltargetZ.y, ctrltargetZ.z]
+        name2: pi
+        data2: [stateEstimateZ.x, stateEstimateZ.y, stateEstimateZ.z]
+      title: Position
       num_of_plots: 3
 
-    page2:
+    page3:
       special: false
       plot_labels: ['vx [m/s]', 'vy [m/s]', 'vz [m/s]']
       unit: mm
       data:
-        name1: v0
-        data1: [stateEstimateZ.pvx, stateEstimateZ.pvy, stateEstimateZ.pvz]
-        name2: v0d
-        data2: [ctrltargetZ.vx, ctrltargetZ.vy, ctrltargetZ.vz]
-      title: Payload Velocity
+        name1: v0d
+        data1: [ctrltargetZ.vx, ctrltargetZ.vy, ctrltargetZ.vz]
+        name2: v0
+        data2: [stateEstimateZ.vx, stateEstimateZ.vy, stateEstimateZ.vz]
+      title: Velocity
       num_of_plots: 3
 
+
+    page4:
+      special: false
+      plot_labels: ['r [rad]', 'p [rad]', 'y [rad]']
+      unit: rad
+      data:
+        name1: rpyd
+        data1: [ctrlLee.rpydx, ctrlLee.rpydy, ctrlLee.rpydz] 
+        name2: rpy
+        data2: [ctrlLee.rpyx, ctrlLee.rpyy, ctrlLee.rpyz]
+      title: rpy
+      num_of_plots: 3
+
+
+    page5:
+      special: false
+      plot_labels: ['wx [rad/s]', 'wy [rad/s]', 'wz [rad/s]']
+      unit: s
+      data:
+        # name1: gyro
+        # data1: [gyro.x, gyro.y, gyro.z]
+        name1: wd
+        data1: [ctrlLee.omegarx, ctrlLee.omegary, ctrlLee.omegarz]
+        name2: w
+        data2: [ctrlLee.omegax, ctrlLee.omegay, ctrlLee.omegaz]
+      title: angular velocity
+      num_of_plots: 3
+
+    page6:
+      special: false
+      plot_labels: ['Jerkx [m/s3]', 'Jerky [m/s3]', 'Jerkz [m/s3]']
+      unit: s
+      data:
+        name1: jerk
+        data1: [ctrlLee.desJerkx, ctrlLee.desJerky, ctrlLee.desJerkz]
+      title: setpoint jerk
+      num_of_plots: 3
+
+
     # page3:
+    #   special: false # if this plot needs a special calculation 
+    #   plot_labels: ["x [m]", "y [m]", "z [m]"]
+    #   unit: m
+    #   data:
+    #     name1: p_uav_d
+    #     data1: [ctrlLeeP.desVirtInpx, ctrlLeeP.desVirtInpy, ctrlLeeP.desVirtInpz]
+    #   title: Desired Cable Forces
+    #   num_of_plots: 3
+
+    # page4:
+    #   special: false # if this plot needs a special calculation 
+    #   plot_labels: ["x [m]", "y [m]", "z [m]"]
+    #   unit: m
+    #   data:
+    #     name1: p_uav_d
+    #     data1: [ctrlLeeP.Fdx, ctrlLeeP.Fdy, ctrlLeeP.Fdz]
+    #   title: Desired Payload Force
+    #   num_of_plots: 3
+
+    # page5:
+    #   special: false # if this plot needs a special calculation 
+    #   plot_labels: ["x [m]", "y [m]", "z [m]"]
+    #   unit: m
+    #   data:
+    #     name1: p_uav_d
+    #     data1: [ctrlLeeP.mu_refx, ctrlLeeP.mu_refy, ctrlLeeP.mu_refz]
+    #   title: Desired Payload Force
+    #   num_of_plots: 3
+
+    # page5:
+    #   special: true # if this plot needs a special calculation 
+    #   plot_labels: ["x [m/s2]", "y [m/s2]", "z [m/s2]"]
+    #   unit: m/s2
+    #   data:
+    #     name2: ab
+    #     data2: [acc.x, acc.y, acc.z, stateEstimate.qw, stateEstimate.qx, stateEstimate.qy, stateEstimate.qz] # we need the quaternions to rotate the acceleration to the world frame
+    #     name1: aw
+    #     data1: [stateEstimate.ax, stateEstimate.ay, stateEstimate.az]
+    #   title: UAV acceleration
+    #   num_of_plots: 3
+
+
+    # page8:
+    #   special: false
+    #   plot_labels: ['rpm1', 'rpm2', 'rpm3', 'rpm4']
+    #   unit: rpm
+    #   data:
+    #     name1: rpm
+    #     data1: [rpm.m1, rpm.m2, rpm.m3, rpm.m4] 
+    #   title: rpm 
+    #   num_of_plots: 4
+
+
+    # page7:
+    #   special: false
+    #   plot_labels: ['pwm1', 'pwm2', 'pwm3', 'pwm4']
+    #   unit: pwm
+    #   data:
+    #     name1: pwm
+    #     data1: [pwm.m1_pwm, pwm.m2_pwm, pwm.m3_pwm, pwm.m4_pwm] 
+    #   title: pwm 
+    #   num_of_plots: 4
+
+    # page12:
     #   special: true
     #   plot_labels: ['f1 [g]', 'f2 [g]', 'f3 [g]', 'f4 [g]', 'maxThrust']
     #   unit: g
@@ -46,96 +151,26 @@ data_to_plot:
     #   title: Thrust 
     #   num_of_plots: 4
 
-    page3:
-      special: true
-      plot_labels: ['f1 [N]', 'f2 [N]', 'f3 [N]', 'f4 [N]']
-      unit: N
-      data:
-        name1: newThrust
-        data1: [ctrlLeeP.thrustSI, ctrlLeeP.torquex, ctrlLeeP.torquey, ctrlLeeP.torquez] 
-      title: Thrust 
-      num_of_plots: 4
+    # page8:
+    #   special: true
+    #   plot_labels: ['Fax [N]', 'Fay [N]', 'Faz [N]']
+    #   unit: N
+    #   data:
+    #     name1: Residual Forces rpm
+    #     data1: [acc.x, acc.y, acc.z, stateEstimate.qw, stateEstimate.qx, stateEstimate.qy, stateEstimate.qz, rpm.m1, rpm.m2, rpm.m3, rpm.m4] 
+    #     name2: Residual Forces pwm
+    #     data2: [acc.x, acc.y, acc.z, stateEstimate.qw, stateEstimate.qx, stateEstimate.qy, stateEstimate.qz, pwm.m1_pwm, pwm.m2_pwm, pwm.m3_pwm, pwm.m4_pwm] 
+    #   title: Residual Forces
+    #   num_of_plots: 3
 
-    page4:
-      special: false
-      plot_labels: ['Fdx [N]', 'Fdy [N]', 'Fdz [N]']
-      unit: N 
-      data:
-        name1: Fd
-        data1: [ctrlLeeP.Fdx, ctrlLeeP.Fdy, ctrlLeeP.Fdz] 
-      title: Desired Payload Force
-      num_of_plots: 3
-
-
-    page5:
-      special: false
-      plot_labels: ['mux [N]', 'muy [N]', 'muz [N]']
-      unit: N 
-      data:
-        name1: mu
-        data1: [ctrlLeeP.desVirtInpx, ctrlLeeP.desVirtInpy, ctrlLeeP.desVirtInpz] 
-        name2: mu_ref
-        data2: [ctrlLeeP.mu_refx, ctrlLeeP.mu_refy, ctrlLeeP.mu_refz] 
-      title: Desired Cable force
-      num_of_plots: 3
-
-    page6:
-      special: false
-      plot_labels: ['qix []', 'qiy []', 'qiz []']
-      unit: N 
-      data:
-        name1: qi
-        data1: [ctrlLeeP.qix, ctrlLeeP.qiy, ctrlLeeP.qiz] 
-        name2: qdi
-        data2: [ctrlLeeP.qdix, ctrlLeeP.qdiy, ctrlLeeP.qdiz] 
-      title: Cable Unit Vectors
-      num_of_plots: 3
-
-    page7:
-      special: false
-      plot_labels: ['qidotx [rad/s]', 'qidoty [rad/s]', 'qidotz [rad/s]']
-      unit: N 
-      data:
-        name1: qidot
-        data1: [ctrlLeeP.qidotx, ctrlLeeP.qidoty, ctrlLeeP.qidotz] 
-        name2: qidref
-        data2: [ctrlLeeP.qidrefx, ctrlLeeP.qidrefy, ctrlLeeP.qidrefz] 
-      title: Cable Unit Vector Derivative
-      num_of_plots: 3
-
-    page8:
-      special: false
-      plot_labels: ['r [rad]', 'p [rad]', 'y [rad]']
-      unit: rad 
-      data:
-        name1: rpy
-        data1: [ctrlLeeP.rpyx, ctrlLeeP.rpyy, ctrlLeeP.rpyz] 
-        name2: rpyd
-        data2: [ctrlLeeP.rpydx, ctrlLeeP.rpydy, ctrlLeeP.rpydz] 
-      title: Orientation
-      num_of_plots: 3
-
-    page9:
-      special: true # if this plot needs a special calculation 
-      plot_labels: ["x [g]", "y [g]", "z [g]"]
-      unit: m
-      data:
-        name1: aw
-        data1: [stateEstimate.ax, stateEstimate.ay, stateEstimate.az]
-        name2: ab
-        data2: [acc.x, acc.y, acc.z]
-        timestamp: []
-      title: acceleration
-      num_of_plots: 3
-
-
-    page10:
-      special: true
-      plot_labels: ['stateEstimate.ax [g]', 'stateEstimate.ay [g]', 'stateEstimate.az [g]','rotated_ax [g]', 'rotated_ay [g]', 'rotated_az [g]']
-      unit: grav 
-      data:
-        name1: a_world
-        data1: [stateEstimate.ax, stateEstimate.ay, stateEstimate.az, acc.x, acc.y, acc.z, stateEstimate.qw, stateEstimate.qx, stateEstimate.qy, stateEstimate.qz] 
-        # data1: [stateEstimate.ax, stateEstimate.ay, stateEstimate.az, acc.x, acc.y, acc.z, ctrlLeeP.rpyx, ctrlLeeP.rpyy, ctrlLeeP.rpyz] 
-      title: acceleration_rotated
-      num_of_plots: 3
+    
+    
+    # page11:
+    #   special: true
+    #   plot_labels: ['f1 [N]', 'f2 [N]', 'f3 [N]', 'f4 [N]']
+    #   unit: N
+    #   data:
+    #     name1: newThrust
+    #     data1: [ctrlLee.thrustSi, ctrlLee.torquex, ctrlLee.torquey, ctrlLee.torquez] 
+    #   title: Thrust 
+    #   num_of_plots: 4
