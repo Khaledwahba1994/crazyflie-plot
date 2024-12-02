@@ -27,7 +27,7 @@ def main():
     
     for k, files in enumerate(flights):
         starttime, logDatas = extractData(files, start_time=start_time, end_time=end_time)
-        # print(logDatas[0].keys())
+        print(logDatas[0].keys())
         flightsData.append(logDatas)
         starttimes.append(starttime)
     data_to_plot = dict()
