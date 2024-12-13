@@ -137,25 +137,28 @@ def computeStats(data, flights):
                     data_p0 = np.array(list(cf_data["name_data"]["data1"].values())) 
                     data_p0d = np.array(list(cf_data["name_data"]["data2"].values())) 
                     ep_trial.extend(np.linalg.norm(data_p0-data_p0d, axis=0)) 
-                elif cf_data["title"] == "Thrust":
-                    motor_data = np.array(list(cf_data["name_data"]["data1"].values()))
-                    motor_thrust = motor_data[0:4, :]
-                    motorForces.append(motor_thrust)
+        #         elif cf_data["title"] == "Thrust":
+        #             motor_data = np.array(list(cf_data["name_data"]["data1"].values()))
+        #             motor_thrust = motor_data[0:4, :]
+        #             motorForces.append(motor_thrust)
     
-        min_size = min(arr.shape[1] for arr in motorForces)
-        motorForces_trimmed =  [arr[:, :min_size] for arr in motorForces]
+        # min_size = min(arr.shape[1] for arr in motorForces)
+        # motorForces_trimmed =  [arr[:, :min_size] for arr in motorForces]
 
-        motorForces_stack = np.concatenate(motorForces_trimmed, axis=0)
-        force = np.sum(motorForces_stack, axis=0)/4
-        power = force / 4
+        # motorForces_stack = np.concatenate(motorForces_trimmed, axis=0)
+        # force = np.sum(motorForces_stack, axis=0)/4
+        # power = force / 4
  
-        energy = np.sum(power.tolist())*0.01/60/60 # Wh
-        energy_trials.append(energy)
+        # energy = np.sum(power.tolist())*0.01/60/60 # Wh
+        # energy_trials.append(energy)
         trials += 1
-    
+    print(ep_trial)
     stats_dict = dict()
-    stats_dict["energy_mean"] = np.mean(energy_trials).tolist()
-    stats_dict["energy_std"] = np.std(energy_trials).tolist()
+    # stats_dict["energy_mean"] = np.mean(energy_trials).tolist()
+    # stats_dict["energy_std"] = np.std(energy_trials).tolist()
+    stats_dict["energy_mean"] = [0]
+    stats_dict["energy_std"] = [0]
+
     stats_dict["energy_unit"] = "Wh"
     stats_dict["trials"] = trials
     stats_dict["ep_mean"] = dict()
@@ -165,6 +168,7 @@ def computeStats(data, flights):
     flights_flattened = flatten(flights)
     
     stats_dict["ep_mean"]["mean"] = float(np.mean(ep_trial))
+    print("epMEAN:", stats_dict["ep_mean"]["mean"])
     stats_dict["ep_mean"]["std"] = float(np.std(ep_trial))
 
     return stats_dict
@@ -195,11 +199,11 @@ def computeMotorForces_new(motor_components, i):
         motorpart.append(np.array([motor_components[f"data{i+1}"][name]]))                   
     armLength = 0.046
     thrustToTorque = 0.005964552
-    arm = 0.707106781 * armLength;
+    arm = 0.707106781 * armLength
     rollPart  = 0.25 / arm * motorpart[1]
     pitchPart = 0.25 / arm * motorpart[2]
     thrustPart = 0.25 * motorpart[0] 
-    yawPart = 0.25 * motorpart[3] / thrustToTorque;
+    yawPart = 0.25 * motorpart[3] / thrustToTorque
     
     for name in names: 
         motorpart.append(np.array([motor_components[f"data{i+1}"][name]]))                   
@@ -213,6 +217,8 @@ def computeMotorForces_new(motor_components, i):
     motor_components[f"data{i+1}"]["f3"] = np.array(thrustPart + rollPart + pitchPart + yawPart)[0].tolist()
     motor_components[f"data{i+1}"]["f4"] = np.array(thrustPart + rollPart - pitchPart - yawPart)[0].tolist()
     return motor_components
+
+
 
 def computerpy(quat, i, axis_name):
     names = quat[f"name{i+1}"]
@@ -232,6 +238,45 @@ def computerpy(quat, i, axis_name):
 
     return quat
 
+def computeFilteredVel(data_dict, i):
+    names = data_dict[f"name{i+1}"]
+    pos_name = names[0:3]
+    time_name = names[-1]
+
+    data = data_dict[f"data{i+1}"]
+    posx = np.array(data[pos_name[0]])
+    posy = np.array(data[pos_name[1]])
+    posz = np.array(data[pos_name[2]])
+    timestamp = np.array(data[time_name])
+
+    data_dict[f"name{i+1}"] = dict()
+    data_dict[f"name{i+1}"] = ['v_f.x', 'v_f.y', 'v_f.z']
+    data_dict[f"data{i+1}"] = dict()
+    data_dict[f"data{i+1}"]["v_f.x"] = []
+    data_dict[f"data{i+1}"]["v_f.y"] = []
+    data_dict[f"data{i+1}"]["v_f.z"] = []
+    
+   
+    pos_prev = np.array([posx[0], posy[0], posz[0]])
+    v_prev = np.zeros(3,)
+    v_f = np.zeros(3,)
+    payload_alpha_v = 0.7
+    for k, t in enumerate(timestamp):
+        if k > 0:
+            t_prev = timestamp[k-1]
+            if t > t_prev:
+                dt = (t - t_prev)
+                pos = np.array([posx[k], posy[k], posz[k]])
+                vel = (pos - pos_prev) / dt
+                pos_prev = pos
+                v_f = ((1 - payload_alpha_v)* v_prev) + payload_alpha_v * vel
+                v_f = np.clip(v_f, -2.0,2.0)
+                v_prev = v_f
+
+        data_dict[f"data{i+1}"]["v_f.x"].append(v_f[0].tolist())
+        data_dict[f"data{i+1}"]["v_f.y"].append(v_f[1].tolist())
+        data_dict[f"data{i+1}"]["v_f.z"].append(v_f[2].tolist())
+    return data_dict
 
 def computeacc(acc, i):
     names = acc[f"name{i+1}"]
@@ -240,6 +285,7 @@ def computeacc(acc, i):
         data.append(acc[f"data{i+1}"][name])
     accb = np.array(data[0:3]).T
     quat = np.array(data[3:7]).T
+    print(quat)
     acc_calc_world = rn.rotate(quat, accb)
     acc[f"name{i+1}"] = dict()
     acc[f"name{i+1}"] = ['ax_w', 'ay_w', 'az_w']
@@ -296,7 +342,6 @@ def computeFa(aw, q, u, axis_name):
 
 def computeResidual(states, i, axis_name):
     names = states[f"name{i+1}"]
-    print(names)
     data = []
     for name in names:
         data.append(states[f"data{i+1}"][name])

@@ -35,7 +35,7 @@ def run_script(config):
     with open(log_path /  f"{flight_name}_output_log.txt", 'w') as f:
         subprocess.run(["python3",
             "report.py", 
-            "--config", configs_path / flight_name,
+            "--config", configs_path / Path(str(flight_name) + ".yaml"),
             "--output", output_path / flight_name,
             "--pdf", pdf_path / flight_name,
             "--start", start_time,
@@ -175,8 +175,13 @@ def main():
                 for n in robots:
                     inst = "{}cfs_{}_{}.yaml".format(n, env, alg)
                     out += " & "
-                    if inst in files_yaml:
+                    inst = inst.removesuffix(".yaml")
+                    print(inst, inst in files_yaml) 
+                    if any(inst in file for file in files_yaml):
+                        inst += ".yaml"
                         inst_values = loadyaml("result/output/"+inst)
+                        print("A7aaaaaa")
+                        print("INST VAL: ",inst_values)
                         ep_mean = inst_values["ep_mean"]["mean"]
                         ep_std = inst_values["ep_mean"]["std"]
                         if alg == "opt":
@@ -202,13 +207,14 @@ def main():
                     out += " & "
                     if inst in files_yaml:
                         inst_values = loadyaml("result/output/"+inst)
+                        print("INST VAL: ",inst_values)
                         energy_mean = inst_values["energy_mean"]
                         energy_std = inst_values["energy_std"]
                         if alg == "opt":
-                            out +=" {{ \\textbf{{{:.3f}}}}}  ".format(energy_mean)
+                            out +=" {{ \\textbf{{{:.3f}}}}}  ".format(0)
                         else: 
-                            out +=" {{ {:.3f}}}  ".format(energy_mean)
-                        out += " {{\\color{{gray}}\\tiny {:.2f} }} ".format(energy_std)
+                            out +=" {{ {:.3f}}}  ".format(0)
+                        out += " {{\\color{{gray}}\\tiny {:.2f} }} ".format(0)
                     else: 
                         out+=" \hspace{0.1cm}--- "
                 out += r"\\"
@@ -220,7 +226,7 @@ def main():
         f.write(r"\end{document}")
 
         
-    gen_pdf(table_path)
+    # gen_pdf(table_path)
     #         pass
     #     pass
 
