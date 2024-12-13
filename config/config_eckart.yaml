@@ -2,16 +2,82 @@ flights:
   extract: true
   name: eckart_data
   data:
-    - [data/lee/cf2_lee_22]
-    # - [data/lee/cf00]
+      # - [data/payload/cf3_45, data/payload/cf9_44]
+      # - [data/payload/cf3_46, data/payload/cf9_45]
+      # - [data/payload/cf3_12, data/payload/cf9_11]
+      # - [data/payload/cf3_16, data/payload/cf9_15]
+      # - [data/payload/new/cf3_20, data/payload/new/cf9_19]
+      # - [data/debug/cf3_00, data/debug/cf9_00, data/debug/cf7_00]
+      # - [data/debug/cf3_06]
+      # - [data/debug/cf3_07]
+      # - [data/debug/cf3_08]
+      # - [data/debug/cf3_21, data/debug/cf7_23, data/debug/cf9_23]
+      # - [data/debug/cf3_51, data/debug/cf7_52, data/debug/cf9_54]
+      # - [data/debug/cf3_58, data/debug/cf7_59, data/debug/cf9_61]
+      # - [data/debug/cf7_64, data/debug/cf9_66]
+      # - [data/debug/cf7_68]
+      # - [data/debug/cf3_85]
+      # - [data/debug/cf7_93, data/debug/cf9_95]
+      - [data/debug/cf9_37]
 
-start_time: 8.0
+    # - [data/dbcbs/cf9_01]
+    # - [data/dbcbs/cf9_04]
+    # - [data/dbcbs/cf9_05]
+    # - [data/dbcbs/cf9_10]
+    # - [data/dbcbs/cf9_12]
+    # - [data/dbcbs/cf9_27]
+    # - [data/dbcbs/cf9_28]
+    # - [data/dbcbs/cf9_31]
+    # - [data/dbcbs/cf9_32]
+    # - [data/dbcbs/cf9_36]
+
+    # - [data/coltransplanning/cf9_02]
+    # - [data/coltransplanning/cf9_03]
+    # - [data/coltransplanning/cf9_06]
+    # - [data/coltransplanning/cf9_11]
+    # - [data/coltransplanning/cf9_13]
+    # - [data/coltransplanning/cf9_14]
+    # - [data/coltransplanning/cf9_25]
+    # - [data/coltransplanning/cf9_29]
+    # - [data/coltransplanning/cf9_33]
+    # - [data/coltransplanning/cf9_34]
+    # - [data/coltransplanning/cf9_38]
+
+start_time: 0.0
 end_time: 50.0
 plot:
   enabled: true
   files:
-    - [data/lee/cf2_lee_22]
-    # - [data/lee/cf00]
+      # - [data/payload/cf3_45, data/payload/cf9_44]
+      # - [data/payload/cf3_46, data/payload/cf9_45]
+      # - [data/payload/cf3_12, data/payload/cf9_11]
+      # - [data/payload/cf3_16, data/payload/cf9_15]
+      # - [data/payload/new/cf3_20, data/payload/new/cf9_19]
+      # - [data/debug/cf3_00, data/debug/cf9_00, data/debug/cf7_00]
+      # - [data/debug/cf3_06]
+      # - [data/debug/cf3_07]
+      # - [data/debug/cf3_08]
+      # - [data/debug/cf3_21, data/debug/cf7_23, data/debug/cf9_23]
+      # - [data/debug/cf3_50]
+      # - [data/debug/cf3_51, data/debug/cf7_52, data/debug/cf9_54]
+      # - [data/debug/cf3_58, data/debug/cf7_59, data/debug/cf9_61]
+      # - [data/debug/cf7_64, data/debug/cf9_66]
+      # - [data/debug/cf7_68]
+      # - [data/debug/cf3_85]
+      # - [data/debug/cf7_93]
+      # - [data/debug/cf7_93, data/debug/cf9_95]
+      - [data/debug/cf9_37]
+
+    # - [data/dbcbs/cf9_01]
+    # - [data/dbcbs/cf9_04]
+    # - [data/dbcbs/cf9_05]
+    # - [data/dbcbs/cf9_10]
+    # - [data/dbcbs/cf9_12]
+    # - [data/dbcbs/cf9_27]
+    # - [data/dbcbs/cf9_28]
+    # - [data/dbcbs/cf9_31]
+    # - [data/dbcbs/cf9_32]
+    # - [data/dbcbs/cf9_36]
 
 data_to_plot:  
     page1:
@@ -21,12 +87,14 @@ data_to_plot:
       data:
         name1: p0d
         data1: [ctrltargetZ.x, ctrltargetZ.y, ctrltargetZ.z]
-        name2: pi
-        data2: [stateEstimateZ.x, stateEstimateZ.y, stateEstimateZ.z]
+        # name2: pi
+        # data2: [stateEstimateZ.x, stateEstimateZ.y, stateEstimateZ.z]
+        name2: p0
+        data2: [stateEstimateZ.px, stateEstimateZ.py, stateEstimateZ.pz]
       title: Position
       num_of_plots: 3
 
-    page3:
+    page2:
       special: false
       plot_labels: ['vx [m/s]', 'vy [m/s]', 'vz [m/s]']
       unit: mm
@@ -34,25 +102,27 @@ data_to_plot:
         name1: v0d
         data1: [ctrltargetZ.vx, ctrltargetZ.vy, ctrltargetZ.vz]
         name2: v0
-        data2: [stateEstimateZ.vx, stateEstimateZ.vy, stateEstimateZ.vz]
-      title: Velocity
+        data2: [stateEstimateZ.pvx, stateEstimateZ.pvy, stateEstimateZ.pvz]
+        # name3: filtered_vel
+        # data3: [stateEstimateZ.px, stateEstimateZ.py, stateEstimateZ.pz, timestamp]
+      title: Payload Velocity
       num_of_plots: 3
 
 
-    page4:
+    page3:
       special: false
       plot_labels: ['r [rad]', 'p [rad]', 'y [rad]']
       unit: rad
       data:
         name1: rpyd
-        data1: [ctrlLee.rpydx, ctrlLee.rpydy, ctrlLee.rpydz] 
+        data1: [ctrlLeeP.rpydx, ctrlLeeP.rpydy, ctrlLeeP.rpydz] 
         name2: rpy
-        data2: [ctrlLee.rpyx, ctrlLee.rpyy, ctrlLee.rpyz]
+        data2: [ctrlLeeP.rpyx, ctrlLeeP.rpyy, ctrlLeeP.rpyz]
       title: rpy
       num_of_plots: 3
 
 
-    page5:
+    page4:
       special: false
       plot_labels: ['wx [rad/s]', 'wy [rad/s]', 'wz [rad/s]']
       unit: s
@@ -60,23 +130,69 @@ data_to_plot:
         # name1: gyro
         # data1: [gyro.x, gyro.y, gyro.z]
         name1: wd
-        data1: [ctrlLee.omegarx, ctrlLee.omegary, ctrlLee.omegarz]
+        data1: [ctrlLeeP.omegarx, ctrlLeeP.omegary, ctrlLeeP.omegarz]
         name2: w
-        data2: [ctrlLee.omegax, ctrlLee.omegay, ctrlLee.omegaz]
+        data2: [ctrlLeeP.omegax, ctrlLeeP.omegay, ctrlLeeP.omegaz]
       title: angular velocity
+      num_of_plots: 3
+
+    page5:
+      special: false
+      plot_labels: ['desmux [N]', 'desmuy [N]', 'desmuz [N]']
+      unit: N
+      data:
+        name1: muref
+        data1: [ctrlLeeP.mu_refx, ctrlLeeP.mu_refy, ctrlLeeP.mu_refz]
+        name2: mudes
+        data2: [ctrlLeeP.desVirtInpx, ctrlLeeP.desVirtInpy, ctrlLeeP.desVirtInpz]
+      title: Desired Cable Force
       num_of_plots: 3
 
     page6:
       special: false
-      plot_labels: ['Jerkx [m/s3]', 'Jerky [m/s3]', 'Jerkz [m/s3]']
-      unit: s
+      plot_labels: ['qi []', 'qi []', 'qi []']
+      unit: "[]"
       data:
-        name1: jerk
-        data1: [ctrlLee.desJerkx, ctrlLee.desJerky, ctrlLee.desJerkz]
-      title: setpoint jerk
+        name1: qid
+        data1: [ctrlLeeP.qdix, ctrlLeeP.qdiy, ctrlLeeP.qdiz]
+        name2: qi
+        data2: [ctrlLeeP.qix, ctrlLeeP.qiy, ctrlLeeP.qiz]
+      title: Cable Vector
       num_of_plots: 3
 
 
+    page7:
+      special: false
+      plot_labels: ['qidot [rad/s]', 'qidot [rad/s]', 'qidot [rad/s]']
+      unit: rad/s
+      data:
+        name1: qiref
+        data1: [ctrlLeeP.qidrefx, ctrlLeeP.qidrefy, ctrlLeeP.qidrefz]
+        name2: qidot
+        data2: [ctrlLeeP.qidotx, ctrlLeeP.qidoty, ctrlLeeP.qidotz]
+      title: Cable angular velocity
+      num_of_plots: 3
+
+    page8:
+      special: false
+      plot_labels: ['Fdx [N]', 'Fdy [N]', 'Fdz [N]']
+      unit: N
+      data:
+        name1: Fd
+        data1: [ctrlLeeP.Fdx, ctrlLeeP.Fdy, ctrlLeeP.Fdz]
+      title: Desired Payload Force
+      num_of_plots: 3
+
+    page9:
+      special: false # if this plot needs a special calculation 
+      plot_labels: ["x [m/s2]", "y [m/s2]", "z [m/s2]"]
+      unit: m/s2
+      data:
+        name1: aw
+        data1: [stateEstimate.ax, stateEstimate.ay, stateEstimate.az]
+      title: UAV acceleration
+      num_of_plots: 3
+    
     # page3:
     #   special: false # if this plot needs a special calculation 
     #   plot_labels: ["x [m]", "y [m]", "z [m]"]
@@ -131,15 +247,15 @@ data_to_plot:
     #   num_of_plots: 4
 
 
-    # page7:
-    #   special: false
-    #   plot_labels: ['pwm1', 'pwm2', 'pwm3', 'pwm4']
-    #   unit: pwm
-    #   data:
-    #     name1: pwm
-    #     data1: [pwm.m1_pwm, pwm.m2_pwm, pwm.m3_pwm, pwm.m4_pwm] 
-    #   title: pwm 
-    #   num_of_plots: 4
+    page10:
+      special: false
+      plot_labels: ['pwm1', 'pwm2', 'pwm3', 'pwm4']
+      unit: pwm
+      data:
+        name1: pwm
+        data1: [pwm.m1_pwm, pwm.m2_pwm, pwm.m3_pwm, pwm.m4_pwm] 
+      title: pwm 
+      num_of_plots: 4
 
     # page12:
     #   special: true
