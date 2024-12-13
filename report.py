@@ -81,7 +81,9 @@ def main():
                             if axis_name == "Residual Forces rpm"or axis_name == "Residual Forces pwm":
                                 fa = computeResidual(data_to_plot[flight_num][page_num][filename]["name_data"], i, axis_name)
                                 data_to_plot[flight_num][page_num][filename]["name_data"] = fa
-
+                            if axis_name == "filtered_vel":
+                                v_f = computeFilteredVel(data_to_plot[flight_num][page_num][filename]["name_data"], i)
+                                data_to_plot[flight_num][page_num][filename]["name_data"] = v_f
 
 
         saveyaml(args.output + "_config",data_to_plot)
@@ -106,9 +108,9 @@ def main():
             f.close()
 
 
-    # if args.output:
-    #     stats_dict = computeStats(data_to_plot, flights)
-    #     saveyaml2(args.output, stats_dict)
+    if args.output:
+        stats_dict = computeStats(data_to_plot, flights)
+        saveyaml2(args.output, stats_dict)
 
     
 if __name__=="__main__":
